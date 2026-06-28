@@ -1,0 +1,4 @@
+node_modules/
+public/results/*.png
+*.log
+.DS_Store

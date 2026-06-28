@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>YeonDU-QA · UI 비교 검사</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #181b22;
+    --border: #2a2e38;
+    --text: #eef0f4;
+    --muted: #9aa3b2;
+    --accent: #6e8bff;
+    --danger: #ff5d73;
+    --ok: #3ddc97;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 40px;
+  }
+  header {
+    padding: 20px 18px 12px;
+    position: sticky;
+    top: 0;
+    background: linear-gradient(180deg, var(--bg) 80%, transparent);
+    z-index: 5;
+  }
+  header h1 {
+    font-size: 19px;
+    margin: 0 0 2px;
+    letter-spacing: -0.2px;
+  }
+  header p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  main {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 8px 16px 0;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input[type="url"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #11141a;
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  input[type="url"]:focus { outline: 2px solid var(--accent); }
+
+  .upload-box {
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 14px;
+    transition: border-color 0.15s;
+  }
+  .upload-box.has-file { border-color: var(--accent); color: var(--text); }
+  .upload-box input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  }
+  .upload-preview {
+    max-width: 100%;
+    max-height: 160px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+  }
+  .upload-preview.show { display: inline-block; }
+
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #11141a;
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  button.primary {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.5; }
+  button.primary:active { transform: scale(0.99); }
+
+  .status {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+    text-align: center;
+    min-height: 18px;
+  }
+  .status.error { color: var(--danger); }
+
+  .result-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .diff-pct {
+    font-size: 28px;
+    font-weight: 800;
+  }
+  .diff-pct.low { color: var(--ok); }
+  .diff-pct.mid { color: #f5b942; }
+  .diff-pct.high { color: var(--danger); }
+  .diff-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 10px;
+    font-size: 13px;
+    background: #11141a;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .view-img {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: none;
+    background: #000;
+  }
+  .view-img.show { display: block; }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>📐 YeonDU-QA</h1>
+  <p>검증할 URL과 기준 스크린샷을 올리면 자동으로 캡처 후 픽셀 단위로 비교해드려요</p>
+</header>
+
+<main>
+  <div class="card">
+    <label for="url">검증할 페이지 URL</label>
+    <input type="url" id="url" placeholder="https://example.com/page" autocomplete="off" />
+
+    <label for="file">기준 스크린샷 업로드</label>
+    <div class="upload-box" id="uploadBox">
+      <span id="uploadHint">탭해서 이미지 선택 (PNG/JPG)</span>
+      <input type="file" id="file" accept="image/png, image/jpeg, image/webp" />
+      <img class="upload-preview" id="preview" alt="preview" />
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="vw">뷰포트 너비(px)</label>
+        <input type="number" id="vw" value="390" min="320" max="1600" />
+      </div>
+      <div>
+        <label for="vh">뷰포트 높이(px)</label>
+        <input type="number" id="vh" value="844" min="480" max="4000" />
+      </div>
+    </div>
+
+    <button class="primary" id="runBtn">비교 시작</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="result-stats">
+      <div>
+        <div class="diff-pct" id="diffPct">0%</div>
+        <div class="diff-label">전체 픽셀 중 다른 비율</div>
+      </div>
+      <div style="text-align:right; font-size:12px; color:var(--muted);" id="dims"></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" data-target="diffImg">차이</div>
+      <div class="tab" data-target="capturedImg">캡처본</div>
+      <div class="tab" data-target="referenceImg">기준본</div>
+    </div>
+    <img class="view-img show" id="diffImg" />
+    <img class="view-img" id="capturedImg" />
+    <img class="view-img" id="referenceImg" />
+  </div>
+
+  <footer>YeonDU-QA · 모바일 UI QA 자동 비교 도구</footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

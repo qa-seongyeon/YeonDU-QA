@@ -1,0 +1,18 @@
+{
+  "name": "yeondu-qa",
+  "version": "1.0.0",
+  "description": "URL을 입력하면 자동으로 스크린샷을 캡처해서, 업로드한 기준 스크린샷과 픽셀 단위로 비교해주는 모바일 UI QA 도구",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "playwright install --with-deps chromium || playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0",
+    "sharp": "^0.33.5"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "ISC"
+}
