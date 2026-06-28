@@ -102,8 +102,6 @@ async function captureScreenshot(targetUrl, viewport) {
     const context = await browser.newContext({
       viewport: { width: viewport.width, height: viewport.height },
       deviceScaleFactor: 1,
-      userAgent:
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
     });
     const page = await context.newPage();
     await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 30000 }).catch(async () => {
@@ -194,8 +192,8 @@ async function handleCompare(req, res) {
   }
 
   const viewport = {
-    width: Number(viewportWidth) > 0 ? Math.min(Number(viewportWidth), 1600) : 390,
-    height: Number(viewportHeight) > 0 ? Math.min(Number(viewportHeight), 4000) : 844,
+    width: Number(viewportWidth) > 0 ? Math.min(Number(viewportWidth), 2560) : 1920,
+    height: Number(viewportHeight) > 0 ? Math.min(Number(viewportHeight), 4000) : 1080,
   };
 
   const id = crypto.randomBytes(6).toString('hex');

@@ -9,6 +9,7 @@
   const runBtn = document.getElementById('runBtn');
   const statusEl = document.getElementById('status');
   const resultCard = document.getElementById('resultCard');
+  const resetBtn = document.getElementById('resetBtn');
   const diffPctEl = document.getElementById('diffPct');
   const dimsEl = document.getElementById('dims');
   const tabs = document.querySelectorAll('.tab');
@@ -55,6 +56,29 @@
     return 'high';
   }
 
+  function resetAll() {
+    urlInput.value = '';
+    fileInput.value = '';
+    imageDataUrl = null;
+    preview.src = '';
+    preview.classList.remove('show');
+    uploadBox.classList.remove('has-file');
+    uploadHint.textContent = '탭해서 이미지 선택 (PNG/JPG)';
+    vwInput.value = 1920;
+    vhInput.value = 1080;
+    resultCard.style.display = 'none';
+    Object.values(images).forEach((img) => {
+      img.src = '';
+      img.classList.remove('show');
+    });
+    images.diffImg.classList.add('show');
+    tabs.forEach((t) => t.classList.remove('active'));
+    tabs[0].classList.add('active');
+    setStatus('');
+  }
+
+  resetBtn.addEventListener('click', resetAll);
+
   runBtn.addEventListener('click', async () => {
     const url = urlInput.value.trim();
     if (!url) return setStatus('URL을 입력해주세요.', true);
@@ -71,8 +95,8 @@
         body: JSON.stringify({
           url,
           image: imageDataUrl,
-          viewportWidth: Number(vwInput.value) || 390,
-          viewportHeight: Number(vhInput.value) || 844,
+          viewportWidth: Number(vwInput.value) || 1920,
+          viewportHeight: Number(vhInput.value) || 1080,
         }),
       });
       const data = await res.json();

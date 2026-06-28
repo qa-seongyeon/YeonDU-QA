@@ -7,14 +7,16 @@
 <link rel="icon" href="data:,">
 <style>
   :root {
-    --bg: #0f1115;
-    --card: #181b22;
-    --border: #2a2e38;
-    --text: #eef0f4;
-    --muted: #9aa3b2;
-    --accent: #6e8bff;
-    --danger: #ff5d73;
-    --ok: #3ddc97;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --border: #e3e6eb;
+    --text: #1c1f26;
+    --muted: #6b7280;
+    --accent: #38bdf8;
+    --accent-dark: #0ea5e9;
+    --danger: #ef4444;
+    --ok: #16a34a;
+    --warn: #d97706;
     --radius: 16px;
   }
   * { box-sizing: border-box; }
@@ -26,20 +28,18 @@
     padding-bottom: 40px;
   }
   header {
-    padding: 20px 18px 12px;
-    position: sticky;
-    top: 0;
-    background: linear-gradient(180deg, var(--bg) 80%, transparent);
-    z-index: 5;
+    padding: 40px 18px 24px;
+    text-align: center;
   }
   header h1 {
-    font-size: 19px;
-    margin: 0 0 2px;
-    letter-spacing: -0.2px;
+    font-size: 38px;
+    margin: 0 0 8px;
+    letter-spacing: -0.5px;
+    font-weight: 800;
   }
   header p {
     margin: 0;
-    font-size: 13px;
+    font-size: 17px;
     color: var(--muted);
   }
   main {
@@ -53,6 +53,8 @@
     border-radius: var(--radius);
     padding: 16px;
     margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: relative;
   }
   label {
     display: block;
@@ -66,7 +68,7 @@
     padding: 12px 14px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: #11141a;
+    background: #fbfbfc;
     color: var(--text);
     font-size: 15px;
     margin-bottom: 14px;
@@ -85,6 +87,7 @@
     overflow: hidden;
     margin-bottom: 14px;
     transition: border-color 0.15s;
+    background: #fbfbfc;
   }
   .upload-box.has-file { border-color: var(--accent); color: var(--text); }
   .upload-box input[type="file"] {
@@ -106,7 +109,7 @@
     padding: 10px 12px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: #11141a;
+    background: #fbfbfc;
     color: var(--text);
     font-size: 14px;
     margin-bottom: 14px;
@@ -123,8 +126,24 @@
     font-weight: 700;
     cursor: pointer;
   }
+  button.primary:hover { background: var(--accent-dark); }
   button.primary:disabled { opacity: 0.5; }
   button.primary:active { transform: scale(0.99); }
+
+  button.reset {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  button.reset:hover { background: #f3f4f6; color: var(--text); }
 
   .status {
     font-size: 13px;
@@ -140,13 +159,14 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 14px;
+    padding-right: 70px;
   }
   .diff-pct {
     font-size: 28px;
     font-weight: 800;
   }
   .diff-pct.low { color: var(--ok); }
-  .diff-pct.mid { color: #f5b942; }
+  .diff-pct.mid { color: var(--warn); }
   .diff-pct.high { color: var(--danger); }
   .diff-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
@@ -161,7 +181,7 @@
     padding: 8px 0;
     border-radius: 10px;
     font-size: 13px;
-    background: #11141a;
+    background: #f3f4f6;
     border: 1px solid var(--border);
     color: var(--muted);
     cursor: pointer;
@@ -176,7 +196,7 @@
     border-radius: 12px;
     border: 1px solid var(--border);
     display: none;
-    background: #000;
+    background: #f3f4f6;
   }
   .view-img.show { display: block; }
 
@@ -190,8 +210,8 @@
 </head>
 <body>
 <header>
-  <h1>📐 YeonDU-QA</h1>
-  <p>검증할 URL과 기준 스크린샷을 올리면 자동으로 캡처 후 픽셀 단위로 비교해드려요</p>
+  <h1>YeonDU-QA 🔍✨</h1>
+  <p>스크린샷으로 홈페이지 UI 정교하게 비교하기!</p>
 </header>
 
 <main>
@@ -209,11 +229,11 @@
     <div class="row">
       <div>
         <label for="vw">뷰포트 너비(px)</label>
-        <input type="number" id="vw" value="390" min="320" max="1600" />
+        <input type="number" id="vw" value="1920" min="320" max="2560" />
       </div>
       <div>
         <label for="vh">뷰포트 높이(px)</label>
-        <input type="number" id="vh" value="844" min="480" max="4000" />
+        <input type="number" id="vh" value="1080" min="480" max="4000" />
       </div>
     </div>
 
@@ -222,6 +242,7 @@
   </div>
 
   <div class="card" id="resultCard" style="display:none;">
+    <button class="reset" id="resetBtn">다시하기</button>
     <div class="result-stats">
       <div>
         <div class="diff-pct" id="diffPct">0%</div>
@@ -239,7 +260,7 @@
     <img class="view-img" id="referenceImg" />
   </div>
 
-  <footer>YeonDU-QA · 모바일 UI QA 자동 비교 도구</footer>
+  <footer>YeonDU-QA · 웹페이지 UI 자동 비교 도구</footer>
 </main>
 
 <script src="app.js"></script>
