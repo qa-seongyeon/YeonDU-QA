@@ -63,6 +63,20 @@
     margin-bottom: 12px;
     font-weight: 600;
   }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .checkbox-label input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
   input[type="url"] {
     width: 100%;
     padding: 24px 28px;
@@ -219,20 +233,22 @@
     <label for="url">검증할 페이지 URL</label>
     <input type="url" id="url" placeholder="https://example.com/page" autocomplete="off" />
 
-    <label>기준 화면</label>
-    <div class="tabs source-tabs">
-      <div class="tab active" data-source="upload">이미지 업로드</div>
-      <div class="tab" data-source="figma">Figma 링크</div>
-    </div>
-
-    <div class="upload-box" id="uploadBox">
-      <span id="uploadHint">탭해서 이미지 선택 (PNG/JPG)</span>
-      <input type="file" id="file" accept="image/png, image/jpeg, image/webp" />
-      <img class="upload-preview" id="preview" alt="preview" />
-    </div>
+    <label class="checkbox-label" for="figmaCheck">
+      <input type="checkbox" id="figmaCheck" />
+      피그마랑 비교하기
+    </label>
 
     <input type="url" id="figmaUrl" placeholder="https://www.figma.com/design/.../?node-id=..." autocomplete="off" style="display:none;" />
     <div class="status" id="figmaHint" style="display:none; margin-top:-20px; margin-bottom:28px; text-align:left;">프레임을 우클릭 → Copy link 로 가져온 주소를 붙여넣으세요.</div>
+
+    <div id="uploadSection">
+      <label>한 가지 화면만 자세히 보고싶어!</label>
+      <div class="upload-box" id="uploadBox">
+        <span id="uploadHint">꼼꼼히 볼게요! 첨부해주세요. (PNG or JPG)</span>
+        <input type="file" id="file" accept="image/png, image/jpeg, image/webp" />
+        <img class="upload-preview" id="preview" alt="preview" />
+      </div>
+    </div>
 
     <div class="row">
       <div>

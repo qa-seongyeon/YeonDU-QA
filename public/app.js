@@ -6,7 +6,8 @@
   const preview = document.getElementById('preview');
   const figmaUrlInput = document.getElementById('figmaUrl');
   const figmaHint = document.getElementById('figmaHint');
-  const sourceTabs = document.querySelectorAll('.source-tabs .tab');
+  const figmaCheck = document.getElementById('figmaCheck');
+  const uploadSection = document.getElementById('uploadSection');
   const vwInput = document.getElementById('vw');
   const vhInput = document.getElementById('vh');
   const runBtn = document.getElementById('runBtn');
@@ -23,18 +24,16 @@
   };
 
   let imageDataUrl = null;
-  let referenceSource = 'upload';
 
-  sourceTabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      sourceTabs.forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-      referenceSource = tab.dataset.source;
-      const isFigma = referenceSource === 'figma';
-      uploadBox.style.display = isFigma ? 'none' : 'block';
-      figmaUrlInput.style.display = isFigma ? 'block' : 'none';
-      figmaHint.style.display = isFigma ? 'block' : 'none';
-    });
+  function isFigmaMode() {
+    return figmaCheck.checked;
+  }
+
+  figmaCheck.addEventListener('change', () => {
+    const isFigma = isFigmaMode();
+    figmaUrlInput.style.display = isFigma ? 'block' : 'none';
+    figmaHint.style.display = isFigma ? 'block' : 'none';
+    uploadSection.style.display = isFigma ? 'none' : 'block';
   });
 
   fileInput.addEventListener('change', () => {
@@ -79,12 +78,10 @@
     preview.src = '';
     preview.classList.remove('show');
     uploadBox.classList.remove('has-file');
-    uploadHint.textContent = '탭해서 이미지 선택 (PNG/JPG)';
+    uploadHint.textContent = '꼼꼼히 볼게요! 첨부해주세요. (PNG or JPG)';
     figmaUrlInput.value = '';
-    referenceSource = 'upload';
-    sourceTabs.forEach((t) => t.classList.remove('active'));
-    sourceTabs[0].classList.add('active');
-    uploadBox.style.display = 'block';
+    figmaCheck.checked = false;
+    uploadSection.style.display = 'block';
     figmaUrlInput.style.display = 'none';
     figmaHint.style.display = 'none';
     vwInput.value = 1920;
@@ -105,9 +102,10 @@
   runBtn.addEventListener('click', async () => {
     const url = urlInput.value.trim();
     const figmaUrl = figmaUrlInput.value.trim();
+    const useFigma = isFigmaMode();
     if (!url) return setStatus('URL을 입력해주세요.', true);
-    if (referenceSource === 'figma' && !figmaUrl) return setStatus('Figma 링크를 입력해주세요.', true);
-    if (referenceSource === 'upload' && !imageDataUrl) return setStatus('기준 스크린샷을 업로드해주세요.', true);
+    if (useFigma && !figmaUrl) return setStatus('Figma 링크를 입력해주세요.', true);
+    if (!useFigma && !imageDataUrl) return setStatus('기준 스크린샷을 업로드해주세요.', true);
 
     runBtn.disabled = true;
     setStatus('페이지를 캡처하고 비교하는 중... (최대 30초)');
@@ -119,8 +117,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url,
-          image: referenceSource === 'upload' ? imageDataUrl : undefined,
-          figmaUrl: referenceSource === 'figma' ? figmaUrl : undefined,
+          image: useFigma ? undefined : imageDataUrl,
+          figmaUrl: useFigma ? figmaUrl : undefined,
           viewportWidth: Number(vwInput.value) || 1920,
           viewportHeight: Number(vhInput.value) || 1080,
         }),
