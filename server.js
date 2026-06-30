@@ -116,6 +116,17 @@ async function fetchFigmaImage(figmaUrl) {
   return Buffer.from(await imgRes.arrayBuffer());
 }
 
+// Strip uniform-color padding (e.g. blank canvas around a manually captured
+// reference screenshot) so it doesn't skew the pixel diff. No-op if there's
+// no border to trim.
+async function trimPadding(buffer) {
+  try {
+    return await sharp(buffer).trim().toBuffer();
+  } catch {
+    return buffer;
+  }
+}
+
 function isValidHttpUrl(value) {
   try {
     const u = new URL(value);
@@ -231,6 +242,7 @@ async function handleCompare(req, res) {
       return sendJSON(res, 400, { error: '기준 스크린샷 이미지를 읽을 수 없습니다.' });
     }
   }
+  referenceBuffer = await trimPadding(referenceBuffer);
 
   const viewport = {
     width: Number(viewportWidth) > 0 ? Math.min(Number(viewportWidth), 2560) : 1920,
