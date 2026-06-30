@@ -87,6 +87,35 @@ function dataUrlToBuffer(dataUrl) {
   return Buffer.from(match[2], 'base64');
 }
 
+function parseFigmaUrl(figmaUrl) {
+  const u = new URL(figmaUrl);
+  const match = u.pathname.match(/\/(file|design|proto)\/([a-zA-Z0-9]+)/);
+  if (!match) throw new Error('INVALID_FIGMA_URL');
+  const fileKey = match[2];
+  const rawNodeId = u.searchParams.get('node-id');
+  if (!rawNodeId) throw new Error('FIGMA_NODE_ID_MISSING');
+  const nodeId = rawNodeId.includes('-') ? rawNodeId.replace('-', ':') : rawNodeId;
+  return { fileKey, nodeId };
+}
+
+async function fetchFigmaImage(figmaUrl) {
+  const token = process.env.FIGMA_TOKEN;
+  if (!token) throw new Error('FIGMA_TOKEN_NOT_CONFIGURED');
+
+  const { fileKey, nodeId } = parseFigmaUrl(figmaUrl);
+  const apiUrl = `https://api.figma.com/v1/images/${fileKey}?ids=${encodeURIComponent(nodeId)}&format=png&scale=2`;
+  const apiRes = await fetch(apiUrl, { headers: { 'X-Figma-Token': token } });
+  const apiData = await apiRes.json();
+  if (!apiRes.ok || apiData.err) throw new Error(apiData.err || 'FIGMA_API_ERROR');
+
+  const imageUrl = apiData.images && apiData.images[nodeId];
+  if (!imageUrl) throw new Error('FIGMA_IMAGE_NOT_FOUND');
+
+  const imgRes = await fetch(imageUrl);
+  if (!imgRes.ok) throw new Error('FIGMA_IMAGE_DOWNLOAD_FAILED');
+  return Buffer.from(await imgRes.arrayBuffer());
+}
+
 function isValidHttpUrl(value) {
   try {
     const u = new URL(value);
@@ -179,16 +208,28 @@ async function handleCompare(req, res) {
     });
   }
 
-  const { url, image, viewportWidth, viewportHeight } = body || {};
+  const { url, image, figmaUrl, viewportWidth, viewportHeight } = body || {};
 
   if (!isValidHttpUrl(url)) {
     return sendJSON(res, 400, { error: '올바른 URL을 입력해주세요 (http:// 또는 https://).' });
   }
+  if (!image && !figmaUrl) {
+    return sendJSON(res, 400, { error: '기준 스크린샷 또는 Figma 링크 중 하나를 입력해주세요.' });
+  }
+
   let referenceBuffer;
-  try {
-    referenceBuffer = dataUrlToBuffer(image);
-  } catch {
-    return sendJSON(res, 400, { error: '기준 스크린샷 이미지를 읽을 수 없습니다.' });
+  if (figmaUrl) {
+    try {
+      referenceBuffer = await fetchFigmaImage(figmaUrl);
+    } catch (e) {
+      return sendJSON(res, 502, { error: `Figma 이미지를 가져오지 못했습니다: ${e.message}` });
+    }
+  } else {
+    try {
+      referenceBuffer = dataUrlToBuffer(image);
+    } catch {
+      return sendJSON(res, 400, { error: '기준 스크린샷 이미지를 읽을 수 없습니다.' });
+    }
   }
 
   const viewport = {

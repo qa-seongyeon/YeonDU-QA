@@ -43,49 +43,49 @@
     color: var(--muted);
   }
   main {
-    max-width: 480px;
+    max-width: 960px;
     margin: 0 auto;
     padding: 8px 16px 0;
   }
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 16px;
+    border-radius: 32px;
+    padding: 32px;
+    margin-bottom: 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     position: relative;
   }
   label {
     display: block;
-    font-size: 13px;
+    font-size: 26px;
     color: var(--muted);
-    margin-bottom: 6px;
+    margin-bottom: 12px;
     font-weight: 600;
   }
   input[type="url"] {
     width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
+    padding: 24px 28px;
+    border-radius: 24px;
     border: 1px solid var(--border);
     background: #fbfbfc;
     color: var(--text);
-    font-size: 15px;
-    margin-bottom: 14px;
+    font-size: 30px;
+    margin-bottom: 28px;
   }
   input[type="url"]:focus { outline: 2px solid var(--accent); }
 
   .upload-box {
     border: 1.5px dashed var(--border);
-    border-radius: 12px;
-    padding: 18px;
+    border-radius: 24px;
+    padding: 36px;
     text-align: center;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 26px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    margin-bottom: 14px;
+    margin-bottom: 28px;
     transition: border-color 0.15s;
     background: #fbfbfc;
   }
@@ -95,34 +95,34 @@
   }
   .upload-preview {
     max-width: 100%;
-    max-height: 160px;
-    border-radius: 8px;
-    margin-top: 10px;
+    max-height: 320px;
+    border-radius: 16px;
+    margin-top: 20px;
     display: none;
   }
   .upload-preview.show { display: inline-block; }
 
-  .row { display: flex; gap: 10px; }
+  .row { display: flex; gap: 20px; }
   .row > div { flex: 1; }
   input[type="number"] {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
+    padding: 20px 24px;
+    border-radius: 20px;
     border: 1px solid var(--border);
     background: #fbfbfc;
     color: var(--text);
-    font-size: 14px;
-    margin-bottom: 14px;
+    font-size: 28px;
+    margin-bottom: 28px;
   }
 
   button.primary {
     width: 100%;
-    padding: 14px;
+    padding: 28px;
     border: none;
-    border-radius: 12px;
+    border-radius: 24px;
     background: var(--accent);
     color: #fff;
-    font-size: 15px;
+    font-size: 30px;
     font-weight: 700;
     cursor: pointer;
   }
@@ -132,25 +132,25 @@
 
   button.reset {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 32px;
+    right: 32px;
     border: 1px solid var(--border);
     background: #fff;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 22px;
     font-weight: 600;
-    padding: 7px 12px;
-    border-radius: 10px;
+    padding: 12px 20px;
+    border-radius: 16px;
     cursor: pointer;
   }
   button.reset:hover { background: #f3f4f6; color: var(--text); }
 
   .status {
-    font-size: 13px;
+    font-size: 22px;
     color: var(--muted);
-    margin-top: 10px;
+    margin-top: 20px;
     text-align: center;
-    min-height: 18px;
+    min-height: 30px;
   }
   .status.error { color: var(--danger); }
 
@@ -158,29 +158,29 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
-    padding-right: 70px;
+    margin-bottom: 28px;
+    padding-right: 140px;
   }
   .diff-pct {
-    font-size: 28px;
+    font-size: 48px;
     font-weight: 800;
   }
   .diff-pct.low { color: var(--ok); }
   .diff-pct.mid { color: var(--warn); }
   .diff-pct.high { color: var(--danger); }
-  .diff-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .diff-label { font-size: 20px; color: var(--muted); margin-top: 4px; }
 
   .tabs {
     display: flex;
-    gap: 6px;
-    margin-bottom: 10px;
+    gap: 12px;
+    margin-bottom: 20px;
   }
   .tab {
     flex: 1;
     text-align: center;
-    padding: 8px 0;
-    border-radius: 10px;
-    font-size: 13px;
+    padding: 16px 0;
+    border-radius: 20px;
+    font-size: 22px;
     background: #f3f4f6;
     border: 1px solid var(--border);
     color: var(--muted);
@@ -193,7 +193,7 @@
   }
   .view-img {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 24px;
     border: 1px solid var(--border);
     display: none;
     background: #f3f4f6;
@@ -219,12 +219,20 @@
     <label for="url">검증할 페이지 URL</label>
     <input type="url" id="url" placeholder="https://example.com/page" autocomplete="off" />
 
-    <label for="file">기준 스크린샷 업로드</label>
+    <label>기준 화면</label>
+    <div class="tabs source-tabs">
+      <div class="tab active" data-source="upload">이미지 업로드</div>
+      <div class="tab" data-source="figma">Figma 링크</div>
+    </div>
+
     <div class="upload-box" id="uploadBox">
       <span id="uploadHint">탭해서 이미지 선택 (PNG/JPG)</span>
       <input type="file" id="file" accept="image/png, image/jpeg, image/webp" />
       <img class="upload-preview" id="preview" alt="preview" />
     </div>
+
+    <input type="url" id="figmaUrl" placeholder="https://www.figma.com/design/.../?node-id=..." autocomplete="off" style="display:none;" />
+    <div class="status" id="figmaHint" style="display:none; margin-top:-20px; margin-bottom:28px; text-align:left;">프레임을 우클릭 → Copy link 로 가져온 주소를 붙여넣으세요.</div>
 
     <div class="row">
       <div>
@@ -250,7 +258,7 @@
       </div>
       <div style="text-align:right; font-size:12px; color:var(--muted);" id="dims"></div>
     </div>
-    <div class="tabs">
+    <div class="tabs result-tabs">
       <div class="tab active" data-target="diffImg">차이</div>
       <div class="tab" data-target="capturedImg">캡처본</div>
       <div class="tab" data-target="referenceImg">기준본</div>
